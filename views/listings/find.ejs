@@ -7,11 +7,13 @@
    <div class="listing-card col-6 offset-2">
   <img src="<%=list.image.url%>" class="card-img-top show-img" alt="image of the thing">
   <div class="card-body">
+    <p class="card-text">Owner: <b><%=list.owner.username%></b></p>
     <p class="card-text">  
 
       <b>  <h3>Title:<%=list.title%></h3><b></b><br>
         <h6><b>Description:</b><%=list.description%></h6><br>
         <h5><b>Price:</b><%=list.price%></h5></p>
+        <%if(currUser && currUser._id.equals(list.owner._id)){%>
          <div class="btns">
         <form method="get" action="/listings/edit/<%=list._id%>">
             <button value="edit" class="btn btn-dark">Edit</button>
@@ -21,6 +23,7 @@
             <button value="Delete" class="btn btn-dark">Delete</button>
         </form>
         </div>
+    <%}%>
         <div class="col-8 offset-3">
             <hr>
             <h4>Leave a Review</h4>

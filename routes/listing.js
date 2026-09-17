@@ -4,6 +4,8 @@ const Listing=require("../models/listing.js");
 const wrapAsync=require('../utils/wrapAsync.js');
 const ExpressError=require('../utils/ExpressError.js');
 const {ListingSchema,reviewSchema}=require('../schema.js');
+const {isLoggedin}=require("../middleware.js");
+const passport=require('passport');
 
 const validateListing=(req,res,next)=>{
     let{error}=ListingSchema.validate(req.body);
@@ -35,9 +37,9 @@ router.get("/",wrapAsync(async (req,res)=>{
 
 
 }))
-router.get("/:id",wrapAsync( async (req,res)=>{
+router.get("/:id",isLoggedin,wrapAsync( async (req,res)=>{
 const {id}=req.params;
-const list= await Listing.findById(id).populate("reviews");
+const list= await Listing.findById(id).populate("reviews").populate("owner");
 if(!list){
     req.flash("error","The page you are trying to look does not exists*")
     res.redirect("/listings");
@@ -46,11 +48,11 @@ else{
 res.render("./listings/find.ejs",{list});
 };
 }))
-router.get("/create/form",(req,res)=>{
+router.get("/create/form",isLoggedin,(req,res)=>{
     
     res.render("./listings/create.ejs");
 })
-router.post("/create",validateListing,wrapAsync(async (req,res)=>{
+router.post("/create",isLoggedin,validateListing,wrapAsync(async (req,res)=>{
 
     // if(!req.body.listing){
     //     throw new ExpressError(400,"Listing is empty");
@@ -63,12 +65,13 @@ router.post("/create",validateListing,wrapAsync(async (req,res)=>{
 
    
    const newListing= new Listing(req.body.listing);
+   newListing.owner=req.user._id;
    // console.log(listing);
    await newListing.save();
    req.flash("success","New Listing Created*");
    res.redirect("/listings");
 }))
-router.get("/edit/:id",wrapAsync(async(req,res)=>{
+router.get("/edit/:id",isLoggedin,wrapAsync(async(req,res)=>{
     
         const {id}=req.params;
     const list=await Listing.findById(id);
@@ -76,7 +79,7 @@ router.get("/edit/:id",wrapAsync(async(req,res)=>{
    
 }))
 
-router.put("/edit/:id",wrapAsync(async(req,res)=>{
+router.put("/edit/:id",isLoggedin,wrapAsync(async(req,res)=>{
     const{id}=req.params;
    await Listing.findByIdAndUpdate(id,{...req.body.Listing});
    req.flash("success","Updated Successfully*");
@@ -84,7 +87,7 @@ router.put("/edit/:id",wrapAsync(async(req,res)=>{
 
     
 }))
-router.delete("/delete/:id",wrapAsync(async(req,res)=>{
+router.delete("/delete/:id",isLoggedin,wrapAsync(async(req,res)=>{
     let{id}=req.params;
     await Listing.findByIdAndDelete(id);
     req.flash("success","Deleted Successfully*");

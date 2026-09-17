@@ -9,6 +9,12 @@ const listings=require("./routes/listing.js");
 const reviews=require("./routes/reviews.js");
 const session=require("express-session");
 const flash=require("connect-flash");
+const passport=require('passport');
+const LocalPassword=require('passport-local');
+const passportLocalMongoose=require('passport-local-mongoose');
+const User=require('./models/user.js');
+const users=require('./routes/users.js');
+//const ejsMate = require("ejs-mate");
 
 
 const sessionOptions={
@@ -24,6 +30,16 @@ const sessionOptions={
 
 app.use(session(sessionOptions));
 app.use(flash());
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalPassword(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
+
 app.engine('ejs',ejsMate);
 
 
@@ -50,12 +66,14 @@ app.get("/",(req,res)=>{
 app.use((req,res,next)=>{
     res.locals.success=req.flash("success");
     res.locals.error=req.flash("error");
+    res.locals.currUser=req.user;
     next();
 });
 
 
 app.use("/listings",listings);
 app.use("/listing/:id/reviews",reviews);
+app.use("/users",users);
 
 app.all("/{*splat}",(req,res,next)=>{
     next(new ExpressError(404,"Page Not Found!"));
