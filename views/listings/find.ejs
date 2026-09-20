@@ -13,7 +13,7 @@
       <b>  <h3>Title:<%=list.title%></h3><b></b><br>
         <h6><b>Description:</b><%=list.description%></h6><br>
         <h5><b>Price:</b><%=list.price%></h5></p>
-        <%if(currUser && currUser._id.equals(list.owner._id)){%>
+        <%if(currUser && list.owner._id.equals(currUser._id)){%>
          <div class="btns">
         <form method="get" action="/listings/edit/<%=list._id%>">
             <button value="edit" class="btn btn-dark">Edit</button>
@@ -23,10 +23,12 @@
             <button value="Delete" class="btn btn-dark">Delete</button>
         </form>
         </div>
-    <%}%>
+        <%}%>
+
         <div class="col-8 offset-3">
             <hr>
             <h4>Leave a Review</h4>
+            <%if(currUser){%>
             <form action="/listing/<%=list._id%>/reviews" method="post" novalidate class="needs-validation">
                 <div class="mb-3 mt-3">
                     <label for="rating" class="form-label">Rating</label>
@@ -41,6 +43,7 @@
                 </div>
                 <button class="btn btn-outline-dark">Submit</button>
             </form>
+            <%}%>
             <hr>
             <!-- <ul>
                 <%for(let review of list.reviews){%>
@@ -55,7 +58,7 @@
                 
                
                     <div class="card-body">
-                        <h5 class="card-title">Rashid</h5>
+                        <h5 class="card-title"><%=review.author.username%></h5>
                         <p class="card-text"><%=review.comment%></p>
                         <p class="card-text"><%=review.rating%> stars</p>
                         <form class="mb-3" method="post" action="/listing/<%=list._id%>/reviews/<%=review._id%>?_method=DELETE">
