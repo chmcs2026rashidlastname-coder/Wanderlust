@@ -23,8 +23,11 @@ module.exports.create=async (req,res)=>{
 
 module.exports.editform=async(req,res)=>{
         let {id}=req.params;
+
     const list=await Listing.findById(id);
-    res.render("./listings/edit.ejs",{list});
+    let originalurl=list.image.url;
+    originalurl=originalurl.replace("/uploads","/uploads/w_250");
+    res.render("./listings/edit.ejs",{list,originalurl});
 }
 
 module.exports.edit=async(req,res)=>{

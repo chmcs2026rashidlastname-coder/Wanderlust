@@ -90,11 +90,11 @@
     flex:1;
  }
  .add-btn{
-    background-color: greenyellow !important;
+    background-color: rgb(174, 46, 46) !important;
     border:none !important;
  }
  .edit-btn{
-    background-color: greenyellow !important;
+    background-color: rgb(174, 46, 46) !important;
     border:none !important;
  }
 
