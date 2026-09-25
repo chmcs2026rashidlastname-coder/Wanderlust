@@ -1,89 +1,20 @@
 const express=require('express');
 const router=express.Router();
-const Listing=require("../models/listing.js");
 const wrapAsync=require('../utils/wrapAsync.js');
 const {isLoggedin,isOwner,validateListing}=require("../middleware.js");
-//const validateListing=require('../middleware.js')
+const {index,createform,create,editform,edit,deletes,show}=require('../controllers/listings.js');
+const multer=require('multer');
+const {storage}=require('../cloudStorage.js');
+const upload=multer({storage});
 
+router.get("/",wrapAsync(index))
+router.get("/create/form",isLoggedin,(createform))
+router.post("/create",isLoggedin,upload.single('listing[image][url]'),validateListing,wrapAsync(create));
 
+router.route("/edit/:id").get(isLoggedin,isOwner,wrapAsync(editform))
+.put(isLoggedin,upload.single('listing[image][url]'),isOwner,wrapAsync(edit))
 
-router.get("/",wrapAsync(async (req,res)=>{
-    // const list=new Listing({
-    //     title:"Rashid",
-    //     description:"I am khan mohammed Rashid Aziz rehman",
-    //     image:"This is the image",
-    //     price:22,
-    //     location:"Shivaji chaowk ulhasnagar",
-    //     country:"India"
-    // })
-    const allListings=await Listing.find({});
-    res.render("./listings/index.ejs",{allListings})
-        //res.send("Successfully done!")
-  //  await list.save();
-
-  //  res.send("Sucessfull!");
-
-
-}))
-
-router.get("/create/form",isLoggedin,(req,res)=>{
-    
-    res.render("./listings/create.ejs");
-})
-router.post("/create",isLoggedin,validateListing,wrapAsync(async (req,res)=>{
-
-    // if(!req.body.listing){
-    //     throw new ExpressError(400,"Listing is empty");
-    // }
-    // let result=ListingSchema.validate(req.body);
-    // if(result.error){
-    //     throw new ExpressError(400,result.error);
-    // }
-    
-
-   
-   const newListing= new Listing(req.body.listing);
-   newListing.owner=req.user._id;
-   // console.log(listing);
-   await newListing.save();
-   req.flash("success","New Listing Created*");
-   res.redirect("/listings");
-}))
-router.get("/edit/:id",isLoggedin,isOwner,wrapAsync(async(req,res)=>{
-    
-        let {id}=req.params;
-        
-    const list=await Listing.findById(id);
-    res.render("./listings/edit.ejs",{list});
-   
-}))
-
-router.put("/edit/:id",isLoggedin,isOwner,wrapAsync(async(req,res)=>{
-    const{id}=req.params;
-   await Listing.findByIdAndUpdate(id,{...req.body.Listing});
-   req.flash("success","Updated Successfully*");
-    res.redirect("/listings");
-
-    
-}))
-router.delete("/delete/:id",isLoggedin,isOwner,wrapAsync(async(req,res)=>{
-    let{id}=req.params;
-    await Listing.findByIdAndDelete(id);
-    req.flash("success","Deleted Successfully*");
-    res.redirect("/listings");
-}))
-router.get("/:id",isLoggedin,wrapAsync( async (req,res)=>{
-const {id}=req.params;
-const list= await Listing.findById(id).populate({path:"reviews",populate:{path:"author",},}).populate("owner");
-if(!list){
-    req.flash("error","The page you are trying to look does not exists*")
-    res.redirect("/listings");
-}
-else{
-res.render("./listings/find.ejs",{list});
-};
-}))
-
-
+router.delete("/delete/:id",isLoggedin,isOwner,wrapAsync(deletes))
+router.get("/:id",isLoggedin,wrapAsync(show))
 module.exports=router;
 

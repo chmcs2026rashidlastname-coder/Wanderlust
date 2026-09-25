@@ -3,7 +3,7 @@
     <div class="row">
         <div class="col-8 offset-2">
     <h1>CREATE NEW LISTINGS</h1>
-    <form method="post" action="/listings/create" novalidate class="needs-validation">
+    <form method="post" action="/listings/create" novalidate class="needs-validation" enctype="multipart/form-data">
        <div class="mb-3">
          <label for="title" class="form-label">Title</label>
         <input type="text" name="listing[title]" placeholder="title"  class="form-control" required>
@@ -34,13 +34,13 @@
           <div class="valid-feedback">Peace*</div>
         <div class="invalid-feedback">You have to enter Your country name*</div>
   </div>
-  <div class="mb-3">
+  <!-- <div class="mb-3">
     <label for="image" class="form-label">Image</label>
     <input type="text" name="listing[image][filename]" placeholder="image filename" class="form-control" required>
-  </div>
+  </div> -->
   <div class="mb-3">
     <label for="image-url" class="form-label">Image URL</label>
-    <input type="text" name="listing[image][url]" placeholder="image URL" class="form-control" required>
+    <input type="file" name="listing[image][url]" placeholder="image URL" class="form-control" required>
   </div>
   <div class="mb-3">
         <button value="Submit" class="btn btn-dark add-btn">Submit</button><br><br>

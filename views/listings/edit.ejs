@@ -4,7 +4,7 @@
         <h1>Edit page</h1>
         <div class="row mt-3">
             <div class="col-8 offset-2">
-        <form method="post" action="/listings/edit/<%=list._id%>?_method=PUT" novalidate class="needs-validation">
+        <form method="post" action="/listings/edit/<%=list._id%>?_method=PUT" novalidate class="needs-validation" enctype="multipart/form-data" >
             <div class="mb-2">
                 <label for="title" class="form-label">Title:</label>
                 <h3>Title:<input type="text" name="Listing[title]" value="<%=list.title%>" class="form-control">
@@ -41,7 +41,10 @@
             </div>
             <div class="mb-2">
                 <label for="image" class="form-label">Image:</label>
-                <h4>Image:<input type="textarea" name="Listing[image.url]" value="<%=list.image.url%>"
+                <!-- <h4>Image:<input type="textarea" name="Listing[image.url]" value="<%=list.image.url%>"
+                        class="form-control">
+                    <div class="invalid-feedback">You cannot leave the image empty*</div></h4> -->
+                      <h4>Image:<input type="file" name="listing[image][url]"
                         class="form-control">
                     <div class="invalid-feedback">You cannot leave the image empty*</div></h4>
             </div>

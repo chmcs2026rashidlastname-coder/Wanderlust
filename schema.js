@@ -7,9 +7,9 @@ module.exports.ListingSchema=joi.object({
         country:joi.string().required(),
         price:joi.number().required().min(0),
         image:joi.object({
-            filename:joi.string().required(),
-            url:joi.string().required()
-        }).required(),
+            filename:joi.string(),
+            url:joi.string()
+        }),
 
     }).required(),
 });
